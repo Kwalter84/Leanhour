@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leanhour — AI Readiness Questionnaire</title>
+<meta name="description" content="A short questionnaire to help Leanhour understand your business before recommending training, tools, or a custom AI system.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12161D;
+    --ink-2:#191E27;
+    --ink-3:#20262F;
+    --paper:#EDE8DC;
+    --paper-dim:#A7A79A;
+    --brass:#C9974B;
+    --brass-dim:#8A6B3C;
+    --verdigris:#5C9186;
+    --line: rgba(237,232,220,0.12);
+    --line-strong: rgba(237,232,220,0.22);
+    --radius: 6px;
+    --error:#C9705C;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Inter', -apple-system, sans-serif;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 32px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--brass);
+  }
+  h1,h2,h3{font-family:'Fraunces', serif;font-weight:500;margin:0;}
+
+  header{
+    position:sticky; top:0; z-index:20;
+    background:rgba(18,22,29,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{max-width:1080px;margin:0 auto;padding:20px 32px;display:flex;align-items:center;justify-content:space-between;}
+  .wordmark{font-family:'Fraunces', serif;font-size:20px;font-weight:600;letter-spacing:0.01em;text-decoration:none;}
+  .wordmark span{color:var(--brass);}
+  .back-link{font-size:14px;color:var(--paper-dim);text-decoration:none;display:flex;align-items:center;gap:6px;}
+  .back-link:hover{color:var(--paper);}
+
+  .intro{padding:72px 0 48px;text-align:center;}
+  .intro h1{font-size:clamp(30px,4vw,42px);line-height:1.12;letter-spacing:-0.01em;margin:16px 0 18px;}
+  .intro p{font-size:16.5px;color:var(--paper-dim);max-width:52ch;margin:0 auto;}
+  .meta-row{display:flex;justify-content:center;gap:24px;margin-top:24px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--paper-dim);letter-spacing:0.03em;}
+  .meta-row span{display:flex;align-items:center;gap:6px;}
+  .meta-row span::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--verdigris);display:inline-block;}
+
+  .progress-wrap{padding:0 0 40px;}
+  .progress-track{height:2px;background:var(--line);border-radius:2px;overflow:hidden;}
+  .progress-fill{height:100%;background:var(--brass);width:0%;transition:width .3s ease;}
+  .progress-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--paper-dim);text-align:right;margin-top:8px;letter-spacing:0.04em;}
+
+  form{padding-bottom:96px;}
+  fieldset{border:none;margin:0 0 44px;padding:0;}
+  .q-label{font-family:'Fraunces',serif;font-size:19px;font-weight:500;margin-bottom:6px;display:block;}
+  .q-num{font-family:'IBM Plex Mono',monospace;color:var(--brass);font-size:13px;margin-right:8px;}
+  .q-help{font-size:13.5px;color:var(--paper-dim);margin:0 0 18px;}
+
+  .text-input, textarea{
+    width:100%;background:var(--ink-2);border:1px solid var(--line-strong);
+    border-radius:var(--radius);padding:13px 16px;color:var(--paper);
+    font-family:'Inter',sans-serif;font-size:15.5px;
+  }
+  .text-input:focus-visible, textarea:focus-visible{outline:2px solid var(--brass);outline-offset:1px;border-color:transparent;}
+  textarea{resize:vertical;min-height:100px;}
+
+  .option-grid{display:flex;flex-direction:column;gap:10px;}
+  .option{
+    display:flex;align-items:flex-start;gap:14px;
+    background:var(--ink-2);border:1px solid var(--line-strong);border-radius:var(--radius);
+    padding:15px 18px;cursor:pointer;transition:border-color .15s, background .15s;
+  }
+  .option:hover{border-color:var(--brass-dim);}
+  .option input{margin-top:3px;accent-color:var(--brass);width:16px;height:16px;flex-shrink:0;}
+  .option-text{font-size:15px;}
+  .option-text strong{display:block;font-weight:500;margin-bottom:2px;}
+  .option-text small{color:var(--paper-dim);font-size:13px;}
+  .option:has(input:checked){border-color:var(--brass);background:var(--ink-3);}
+
+  .row-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+
+  .submit-bar{
+    display:flex;align-items:center;justify-content:space-between;gap:20px;
+    border-top:1px solid var(--line);padding-top:32px;flex-wrap:wrap;
+  }
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:'Inter', sans-serif;font-weight:500;font-size:15px;
+    padding:14px 28px;border-radius:var(--radius);
+    text-decoration:none;transition:background .15s;
+    border:1px solid transparent;cursor:pointer;
+  }
+  .btn:focus-visible{outline:2px solid var(--brass);outline-offset:2px;}
+  .btn-primary{background:var(--brass);color:var(--ink);}
+  .btn-primary:hover{background:#dba95a;}
+  .submit-note{font-size:13px;color:var(--paper-dim);max-width:32ch;}
+
+  .success{display:none;text-align:center;padding:120px 0;}
+  .success.show{display:block;}
+  .success h2{font-size:30px;margin:20px 0 14px;}
+  .success p{color:var(--paper-dim);font-size:16px;max-width:44ch;margin:0 auto 28px;}
+  form.hide{display:none;}
+  .intro.hide{display:none;}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;}
+  .foot-row{max-width:1080px;margin:0 auto;padding:0 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+  .foot-row p{margin:0;font-size:13px;color:var(--paper-dim);}
+
+  @media (max-width:600px){
+    .row-2{grid-template-columns:1fr;}
+    .meta-row{flex-direction:column;gap:8px;align-items:center;}
+    .submit-bar{flex-direction:column;align-items:flex-start;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <a href="index.html" class="wordmark">Lean<span>hour</span></a>
+    <a href="index.html" class="back-link">← Back to site</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="intro" id="intro">
+    <p class="eyebrow">AI Readiness Questionnaire</p>
+    <h1>Let's find out where AI could actually help.</h1>
+    <p>No wrong answers here — whether you've never touched an AI tool or already use a few, this helps us come back with a recommendation that fits your business specifically, not a generic pitch.</p>
+    <div class="meta-row">
+      <span>About 5 minutes</span>
+      <span>Confidential</span>
+      <span>No obligation</span>
+    </div>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <p class="progress-label" id="progressLabel">0 of 7 answered</p>
+  </div>
+
+  <form name="ai-questionnaire" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="quizForm">
+    <input type="hidden" name="form-name" value="ai-questionnaire">
+    <p style="display:none;"><label>Don't fill this out: <input name="bot-field"></label></p>
+
+    <fieldset>
+      <label class="q-label" for="business"><span class="q-num">01</span>What's your business, and roughly how many people work there?</label>
+      <p class="q-help">A one-person shop or a fifty-person team — both are exactly who we work with.</p>
+      <input class="text-input" type="text" id="business" name="business" placeholder="e.g. Miller's Hardware, 4 employees" required>
+    </fieldset>
+
+    <fieldset>
+      <label class="q-label"><span class="q-num">02</span>How familiar are you with AI tools today?</label>
+      <p class="q-help">Totally fine if the answer is "not at all."</p>
+      <div class="option-grid" role="radiogroup">
+        <label class="option"><input type="radio" name="familiarity" value="Never used one" required><span class="option-text"><strong>Never used one</strong><small>I'm here to learn what's actually possible</small></span></label>
+        <label class="option"><input type="radio" name="familiarity" value="Tried a tool casually"><span class="option-text"><strong>Tried a tool or two casually</strong><small>ChatGPT or similar, nothing formal</small></span></label>
+        <label class="option"><input type="radio" name="familiarity" value="Team uses AI tools actively"><span class="option-text"><strong>My team actively uses AI tools</strong><small>It's part of how we already work</small></span></label>
+        <label class="option"><input type="radio" name="familiarity" value="Already have custom automation"><span class="option-text"><strong>We have some custom automation already</strong><small>Looking to expand or improve it</small></span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <label class="q-label" for="timedrain"><span class="q-num">03</span>What's eating the most time in your week right now?</label>
+      <p class="q-help">Scheduling, customer questions, data entry, reporting — whatever comes to mind first.</p>
+      <textarea id="timedrain" name="time_drain" placeholder="Tell us what's actually eating your hours..." required></textarea>
+    </fieldset>
+
+    <fieldset>
+      <label class="q-label"><span class="q-num">04</span>What are you hoping to get out of this?</label>
+      <div class="option-grid" role="radiogroup">
+        <label class="option"><input type="radio" name="goal" value="Understand what's possible" required><span class="option-text"><strong>Just want to understand what's possible</strong></span></label>
+        <label class="option"><input type="radio" name="goal" value="Simple affordable tool"><span class="option-text"><strong>Looking for a simple, affordable tool to try</strong></span></label>
+        <label class="option"><input type="radio" name="goal" value="Custom solution"><span class="option-text"><strong>Ready to talk about a custom solution</strong></span></label>
+        <label class="option"><input type="radio" name="goal" value="Not sure yet"><span class="option-text"><strong>Not sure yet — that's why I'm reaching out</strong></span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <label class="q-label" for="currenttools"><span class="q-num">05</span>Any tools you're already using day-to-day?</label>
+      <p class="q-help">CRM, scheduling software, spreadsheets — helps us know what we'd be working around. Optional.</p>
+      <input class="text-input" type="text" id="currenttools" name="current_tools" placeholder="e.g. QuickBooks, Google Calendar, a lot of spreadsheets">
+    </fieldset>
+
+    <fieldset>
+      <label class="q-label"><span class="q-num">06</span>Your contact info</label>
+      <p class="q-help">So we know how to follow up.</p>
+      <div class="row-2" style="margin-bottom:12px;">
+        <input class="text-input" type="text" name="name" placeholder="Your name" required>
+        <input class="text-input" type="email" name="email" placeholder="Email address" required>
+      </div>
+      <input class="text-input" type="tel" name="phone" placeholder="Phone (optional)">
+    </fieldset>
+
+    <fieldset>
+      <label class="q-label"><span class="q-num">07</span>Best way to follow up?</label>
+      <div class="option-grid" role="radiogroup">
+        <label class="option"><input type="radio" name="contact_pref" value="Email" required><span class="option-text"><strong>Email</strong></span></label>
+        <label class="option"><input type="radio" name="contact_pref" value="Phone call"><span class="option-text"><strong>Phone call</strong></span></label>
+        <label class="option"><input type="radio" name="contact_pref" value="Text"><span class="option-text"><strong>Text</strong></span></label>
+      </div>
+    </fieldset>
+
+    <div class="submit-bar">
+      <button type="submit" class="btn btn-primary">Submit questionnaire</button>
+      <p class="submit-note">We'll follow up within 1–2 business days. No spam, no auto-enrollment in anything.</p>
+    </div>
+  </form>
+
+  <div class="success" id="successMsg">
+    <p class="eyebrow">Thank you</p>
+    <h2>Got it — we'll be in touch soon.</h2>
+    <p>Thanks for taking the time. We'll review your answers and follow up the way you asked us to, usually within 1–2 business days.</p>
+    <a href="index.html" class="btn btn-primary">Back to Leanhour</a>
+  </div>
+
+</main>
+
+<footer>
+  <div class="foot-row">
+    <a href="index.html" class="wordmark">Lean<span style="color:var(--brass);">hour</span></a>
+    <p>&copy; <span id="year"></span> Leanhour · Strongsville, Ohio</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  const form = document.getElementById('quizForm');
+  const fields = form.querySelectorAll('input[required], textarea[required]');
+  const radioGroups = {};
+  fields.forEach(f => { if (f.type === 'radio') radioGroups[f.name] = true; });
+  const totalQuestions = 7;
+
+  function countAnswered(){
+    let answered = 0;
+    if (document.getElementById('business').value.trim()) answered++;
+    if (form.querySelector('input[name="familiarity"]:checked')) answered++;
+    if (document.getElementById('timedrain').value.trim()) answered++;
+    if (form.querySelector('input[name="goal"]:checked')) answered++;
+    answered++; // tools is optional, always counts toward progress feel
+    if (form.querySelector('input[name="name"]').value.trim() && form.querySelector('input[name="email"]').value.trim()) answered++;
+    if (form.querySelector('input[name="contact_pref"]:checked')) answered++;
+    return answered;
+  }
+
+  function updateProgress(){
+    const answered = countAnswered();
+    const pct = Math.round((answered/totalQuestions)*100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = answered + ' of ' + totalQuestions + ' answered';
+  }
+
+  form.addEventListener('input', updateProgress);
+  form.addEventListener('change', updateProgress);
+  updateProgress();
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const data = new FormData(form);
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(data).toString()
+    }).then(() => {
+      document.getElementById('intro').classList.add('hide');
+      document.querySelector('.progress-wrap').style.display = 'none';
+      form.classList.add('hide');
+      document.getElementById('successMsg').classList.add('show');
+      window.scrollTo({top:0, behavior:'smooth'});
+    }).catch(() => {
+      alert('Something went wrong submitting the form. Please try again or email kevin@leanhour.llc directly.');
+    });
+  });
+</script>
+
+</body>
+</html>
